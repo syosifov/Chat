@@ -17,19 +17,9 @@ import javax.websocket.WebSocketContainer;
 
 @ClientEndpoint
 public class Client {
-	Session userSession = null;
-    private MessageHandler messageHandler;
- 
-    public Client(URI endpointURI) {
-        try {
-            WebSocketContainer container = ContainerProvider
-                    .getWebSocketContainer();
-            container.connectToServer(this, endpointURI);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
- 
+
+	private Session userSession = null;
+    
     /**
      * Callback hook for Connection open events.
      * 
@@ -39,6 +29,8 @@ public class Client {
     @OnOpen
     public void onOpen(Session userSession) {
         this.userSession = userSession;
+        System.out.println("Client onOpen");
+        System.out.println("Client userSession.id " + userSession.getId());
     }
  
     /**
@@ -51,6 +43,8 @@ public class Client {
      */
     @OnClose
     public void onClose(Session userSession, CloseReason reason) {
+    	System.out.println("Client onClose");
+        System.out.println("Client userSession.id " + userSession.getId());
         this.userSession = null;
     }
  
@@ -63,19 +57,11 @@ public class Client {
      */
     @OnMessage
     public void onMessage(String message) {
-        if (this.messageHandler != null)
-            this.messageHandler.handleMessage(message);
+    	System.out.println("Client onMessage");
+        System.out.println(message);
     }
  
-    /**
-     * register message handler
-     * 
-     * @param message
-     */
-    public void addMessageHandler(MessageHandler msgHandler) {
-        this.messageHandler = msgHandler;
-    }
- 
+    
     /**
      * Send a message.
      * 
@@ -83,15 +69,9 @@ public class Client {
      * @param message
      */
     public void sendMessage(String message) {
+    	System.out.println("Client sendMessage");
         this.userSession.getAsyncRemote().sendText(message);
     }
  
-    /**
-     * Message handler.
-     * 
-     * @author Jiji_Sasidharan
-     */
-    public static interface MessageHandler {
-        public void handleMessage(String message);
-    }
+    
 }
